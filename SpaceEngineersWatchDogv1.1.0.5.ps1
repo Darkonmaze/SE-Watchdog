@@ -9,7 +9,7 @@ $global:config = Get-Content -Path $configFile -Raw | ConvertFrom-Json
 #Display startup message
 $StartupMessage = @"
 ==================================================
-|  Space Engineers WatchDog                      |
+|  SE-WatchDog                      |
 |                                                |
 |  Developed By: Darkon                          |
 |  Developed to be used with: Nexus/Torch        |
@@ -78,7 +78,7 @@ Write-Host $StartupMessage
 #-------------Name of Window---------------------------------------------------
 
 # Set custom window title
-$WindowTitle = "Space Engineers WatchDog"
+$WindowTitle = "SE-WatchDog"
 [Console]::Title = $WindowTitle
 
 #-------------Timestamp Function-----------------------------------------------
