@@ -178,7 +178,7 @@ if (-not $nexusEnabled) {
 
 # Initialize a hashtable to store the start counts of each server
 $serverStartCounts = @{}
-
+try {
 while ($true) {
 $currentStatus = $serverStatus
 #-------------Nexus Controller-------------------------------------------------
@@ -296,5 +296,14 @@ $currentTime = Get-Date
 	$previousStatus = $currentStatus
 	}
 Start-Sleep -Seconds 10
+} 
+
+} catch {
+	
+	Write-log -message "An error occurred: $_"
+    Write-log -message "Error message: $($Error[0].Exception.Message)"
+    Write-log -message "Error category: $($Error[0].CategoryInfo.Category)"
+    Write-log -message "Script line: $($Error[0].InvocationInfo.ScriptLineNumber)"
+	Read-Host "Press any key to continue..."
 }
 # Additional logic can be added as needed
