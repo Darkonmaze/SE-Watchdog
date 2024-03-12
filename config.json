@@ -1,0 +1,14 @@
+{
+	"NexusControllerEnabled": true,	
+	"TorchLogs": [
+        "C:\\Some\\Default\\Path"
+    ],
+	"TorchDirectories": [
+	{
+        "Name": "[Name of instance]",
+        "Path": "C:\\Some\\Default\\Path\\Torch.Server.exe",
+        "Arguments": "-autostart",
+        "LogDirectory": "C:\\Torch\\server\\Path\\Logs"
+    }
+	]
+}
