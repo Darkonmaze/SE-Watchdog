@@ -9,7 +9,7 @@ $global:config = Get-Content -Path $configFile -Raw | ConvertFrom-Json
 #Display startup message
 $StartupMessage = @"
 ==================================================
-|  SE-WatchDog                      |
+|  SE-WatchDog                                   |
 |                                                |
 |  Developed By: Darkon                          |
 |  Developed to be used with: Nexus/Torch        |
