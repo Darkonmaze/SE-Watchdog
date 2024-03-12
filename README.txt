@@ -25,7 +25,8 @@ open up the config.json file
 		-"Name" is the "instance" name By default it is just called "instance".
 			-if you are running multiple instances of torch. You will need to change the instance name.
 				-to do this go to your torch files and locate torch.cfg.
-				-once there change <InstanceName>Instance</InstanceName> to a unique name such as <InstanceName>Lobby</InstanceName>
+				-once there change <InstanceName>Instance</InstanceName> 
+					to a unique name such as <InstanceName>Lobby</InstanceName>
 		-Path is executable for torch.
 		-"Arguments": ... DONT CHANGE THIS
 		-"LogDirectory" Same as "TorchLogs"
