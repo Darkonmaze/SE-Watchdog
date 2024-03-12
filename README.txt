@@ -1,4 +1,4 @@
-Thank you for downloading My script.
+Thank you for downloading SE WatchDog.
 
 **************************************************************************
 If you are updating WatchDog DO NOT copy over the configs
