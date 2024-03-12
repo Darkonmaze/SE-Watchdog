@@ -1,5 +1,10 @@
 Thankyou for downloading My script.
 
+**************************************************************************
+If you are updating WatchDog DO NOT copy over the configs
+**************************************************************************
+
+
 To Use this script there is some setup that you need to do.
 
 Place the file where you want.
