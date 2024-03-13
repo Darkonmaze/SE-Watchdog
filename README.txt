@@ -15,7 +15,7 @@ open up the config.json file
 	
 	-the '\\' in the path's is required.
 	
-	-If you are using The Nexus Controller Leave the it as true.
+	-If you are using The Nexus Controller Leave the NexusControllerEnabled as true.
 	
 	-The "Torchlogs" Path you can find where you placed the torch files. If you have multiple servers add a ',' to each.
 	-eg "C:\\Some\\Default\\Path",
