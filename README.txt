@@ -14,7 +14,7 @@ it needs to be tested more. It will just say that it detected a fatal error in t
 
 The Watchdog will post all output that has a timestamp into the logs in ...\watchdog\logs
 
-If you have any questions or suggestions feel free to contact me on discord
+If you have any questions or feature requests feel free to contact me on discord
 I am on Nexus, Keen's, and Torch's Discord
 
 You can also join our discord and get me there https://discord.gg/z5Jqtf94cP
