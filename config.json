@@ -1,7 +1,7 @@
 {
 	"NexusControllerEnabled": true,	
 	"TorchLogs": [
-        "C:\\Some\\Default\\Path"
+        "C:\\Some\\Default\\Path\\Logs"
     ],
 	"TorchDirectories": [
 	{
