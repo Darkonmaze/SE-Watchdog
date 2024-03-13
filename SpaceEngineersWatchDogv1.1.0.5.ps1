@@ -127,16 +127,24 @@ function Write-Log {
 
 #-------------FATAL Error Function---------------------------------------------
 
+# Read configuration from JSON file
+$configFile = "config.json"
+$config = Get-Content -Path $configFile -Raw | ConvertFrom-Json
+
+# Get the list of log directories from the configuration
+$logDirectories = $config.TorchDirectories.LogDirectory
+
+# Function to search for fatal errors in log directories
 function Search-FatalErrors {
     param (
         [string[]]$torchLogs
     )
 
-    # Initialize a hashtable to store logs per server
-    $logsPerServer = @{}
+    # Initialize a list to store server directories with fatal errors
+    $serversWithErrors = @()
 
     # Define the regular expression pattern to search for
-    $pattern = '\[INFO\] *Initializer:.*\.dmp'
+    $pattern = '^\[\d{2}:\d{2}:\d{2}\.\d{4}\] \[INFO\] Initializer:.*\.dmp$'
 
     # Get the current date and time minus 30 seconds
     $startDate = (Get-Date).AddSeconds(-30)
@@ -147,24 +155,43 @@ function Search-FatalErrors {
         $logFiles = Get-ChildItem -Path $logDir -Filter "Torch-*.log" | Sort-Object LastWriteTime -Descending
 
         # Select the first log, if available
-        $selectedLogs = $logFiles | Select-Object -First 1
+        $selectedLog = $logFiles | Select-Object -First 1
 
-        # Read the content of the selected log file
-        $logContent = Get-Content $selectedLogs.FullName -ErrorAction SilentlyContinue
+        # Check if the log file is not null
+        if ($selectedLog -ne $null) {
+            # Read the content of the selected log file
+            $logContent = Get-Content $selectedLog.FullName -ErrorAction SilentlyContinue
 
-        # Check if the log content contains the error message within the last 30 seconds
-        if ($logContent -match $pattern -and $selectedLogs.LastWriteTime -gt $startDate) {
-            #$logsPerServer[$logDir] = "Fatal error found in $($selectedLogs.Name) within the last 30 seconds"
-			return $true
-        } else {           
-			#$logsPerServer[$logDir] = "No fatal error found in $($selectedLogs.Name) within the last 30 seconds"
-			return $false
+            # Get the last write time of the log file
+            $lastWriteTime = $selectedLog.LastWriteTime
+
+            # Check Time Window: Compare the last write time with the start time
+            if ($lastWriteTime -gt $startDate) {
+                # Initialize a flag to indicate if fatal error is found in the time window
+                $fatalErrorFound = $false
+
+                # Loop through each line in the log content within the time window
+                foreach ($line in $logContent) {
+                    # Check if the line contains the fatal error pattern
+                    if ($line -match $pattern) {
+                        # Set the flag and exit the loop if a fatal error is found
+                        $fatalErrorFound = $true
+                        break
+                    }
+                }
+
+                # If a fatal error is found within the time window, add the server directory to the list
+                if ($fatalErrorFound) {
+                    $serversWithErrors += $logDir
+                }
+            }
         }
     }
 
-    # Output the result
-    return $logsPerServer
+    # Output the list of server directories with fatal errors
+    return $serversWithErrors
 }
+
 
 #-------------Main Loop--------------------------------------------------------
 # Pull NexusControllerEnabled from the Config.json file
@@ -182,6 +209,19 @@ try {
 while ($true) {
 $currentStatus = $serverStatus
 #-------------Nexus Controller-------------------------------------------------
+# check if there is a change in serverStatus. IF so do this
+	if ($currentStatus -ne $previousStatus) {
+		if ($currentStatus)
+		{
+		Write-Log -message "All servers are running Nominally"
+	} else {
+		Write-Log -message "One ore more servers has encoutered an"
+		Write-Log -message "error or was shutdown. No action needed."
+    }
+	# update previous status
+	$previousStatus = $currentStatus
+	}
+	
 #If the Controller is enabled through the config file
 	if ($nexusEnabled) {
 		# Check if Nexus Controller is running
@@ -209,31 +249,15 @@ $currentStatus = $serverStatus
 			}
 	}
 #-------------Fatal Error Crash Check------------------------------------------
+# Call the function to search for fatal errors
+$serversWithErrors = Search-FatalErrors -torchLogs $logDirectories
 
-# Call the function and pass the array of log directories
-$result = Search-FatalErrors -torchLogs $torchDirectories.LogDirectory
-
-
-# Output the result
-if ($result -eq $true) {
-    foreach ($serverProcess in $config.TorchDirectories) {
-            $serverName = $serverProcess.Name
-            $executable = $serverProcess.Path
-		    # Check if the server process is running before attempting to stop it
-		    $processName = (Get-Process | Where-Object {$_.Path -like $executable}).Id
-            if ($processName) {
-                Write-Log -Message "The server has encountered a fatal error shutting down the $($serverName) server..."
-                Stop-Process -ID $processName -Force
-            } else {
-                #Servers are offline
-            }
-        else {
-		    Write-Log -message "No Fatal errors found in the logs"
-	    }
-    }
+# Output the list of servers with fatal errors
+#Write-Host "Servers with fatal errors:"
+foreach ($server in $serversWithErrors) {
+    Write-Log -message "$($server) has encountered a fatal error"
+	$serverStatus = $false
 }
-
-
 
 #-------------Find Server Processes not running and start them------------------
 
@@ -283,18 +307,7 @@ $currentTime = Get-Date
 		}
 	}
 
-# check if there is a change in serverStatus. IF so do this
-	if ($currentStatus -ne $previousStatus) {
-		if ($currentStatus)
-		{
-		Write-Log -message "All servers are running Nominally"
-	} else {
-		Write-Log -message "One more servers has encoutered an"
-		Write-Log -message "error or was shutdown. No action needed."
-    }
-	# update previous status
-	$previousStatus = $currentStatus
-	}
+
 Start-Sleep -Seconds 10
 } 
 
