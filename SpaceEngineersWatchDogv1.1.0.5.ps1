@@ -140,7 +140,7 @@ function Search-FatalErrors {
     $serversWithErrors = @()
 
     # Define the regular expression pattern to search for
-    $pattern = '^\[\d{2}:\d{2}:\d{2}\.\d{4}\] \[INFO\] Initializer:.*\.dmp$'
+    $pattern = '^\d{2}:\d{2}:\d{2}\.\d{4} \[FATAL\]  (\w+): (.*)$'
 
     # Get the current date and time minus 30 seconds
     $startDate = (Get-Date).AddSeconds(-30)
