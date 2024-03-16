@@ -90,10 +90,6 @@ function Get-Timestamp {
 
 #-------------WatchDog Log Directories-----------------------------------------
 
-
-#Get the directory of WatchDog
-$scriptDir = $PSScriptRoot
-
 # Define the name of the Log File
 $newDirectoryName = "Logs"
 
@@ -158,7 +154,7 @@ function Search-FatalErrors {
         $selectedLog = $logFiles | Select-Object -First 1
 
         # Check if the log file is not null
-        if ($selectedLog -ne $null) {
+        if ($null -ne $selectedLog) {
             # Read the content of the selected log file
             $logContent = Get-Content $selectedLog.FullName -ErrorAction SilentlyContinue
 
